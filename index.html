@@ -1090,6 +1090,241 @@ body::before{
 }
 </style>
 
+
+<style id="bob-ultimate-ui">
+:root{
+  --bob-white:#fff;
+  --bob-black:#000;
+}
+
+/* HOME controls */
+.home-notification{
+  top:calc(58px + env(safe-area-inset-top)) !important;
+  left:max(10px,env(safe-area-inset-left)) !important;
+}
+.home-profile-wrap{
+  top:calc(58px + env(safe-area-inset-top)) !important;
+  right:max(10px,env(safe-area-inset-right)) !important;
+}
+
+.home-notification .home-notification-bell,
+#homeProfileButton{
+  width:34px !important;
+  height:34px !important;
+  min-width:34px !important;
+  min-height:34px !important;
+  background:#000 !important;
+  color:#fff !important;
+  border:2px solid #fff !important;
+  border-radius:0 !important;
+  box-shadow:4px 4px 0 #fff !important;
+  font-family:monospace !important;
+  font-weight:900 !important;
+  transition:transform .1s,box-shadow .1s,background .1s,color .1s !important;
+}
+.home-notification .home-notification-bell{
+  font-size:16px !important;
+}
+#homeProfileButton{
+  font-size:16px !important;
+}
+.home-notification .home-notification-bell:active,
+#homeProfileButton:active{
+  transform:translate(3px,3px) !important;
+  box-shadow:1px 1px 0 #fff !important;
+}
+.home-notification .home-notification-bell:hover,
+#homeProfileButton:hover{
+  background:#fff !important;
+  color:#000 !important;
+}
+
+/* MODALS */
+#homeNotificationPanel,
+#homeProfilePanel{
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100dvh !important;
+  min-height:100vh !important;
+  padding:
+    calc(20px + env(safe-area-inset-top))
+    max(20px,env(safe-area-inset-right))
+    calc(20px + env(safe-area-inset-bottom))
+    max(20px,env(safe-area-inset-left)) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-sizing:border-box !important;
+  background:rgba(0,0,0,.78) !important;
+  z-index:99999 !important;
+}
+#homeNotificationPanel[hidden],
+#homeProfilePanel[hidden]{
+  display:none !important;
+}
+
+#homeNotificationPanel .home-notification-window,
+#homeProfilePanel .home-profile-window{
+  width:min(360px,calc(100vw - 40px)) !important;
+  max-height:min(78dvh,560px) !important;
+  overflow:auto !important;
+  background:#000 !important;
+  color:#fff !important;
+  border:2px solid #fff !important;
+  border-radius:0 !important;
+  box-shadow:8px 8px 0 #fff !important;
+  padding:48px 22px 24px !important;
+  box-sizing:border-box !important;
+  font-family:monospace !important;
+  animation:bobUltimateOpen .18s steps(3,end) !important;
+}
+@keyframes bobUltimateOpen{
+  0%{opacity:0;transform:scale(.92)}
+  50%{opacity:.7;transform:scale(1.02)}
+  100%{opacity:1;transform:scale(1)}
+}
+
+/* header / close */
+#homeNotificationPanel .home-notification-window:before{
+  content:"BOB // MESSAGE";
+}
+#homeProfilePanel .home-profile-window:before{
+  content:"BOB // PROFIL";
+}
+#homeNotificationPanel .home-notification-window:before,
+#homeProfilePanel .home-profile-window:before{
+  position:absolute;
+  top:13px;
+  left:18px;
+  color:#fff;
+  font:700 10px/1 monospace;
+  letter-spacing:1.5px;
+}
+
+#homeNotificationPanel .home-notification-close,
+#homeProfilePanel .home-profile-close{
+  position:absolute !important;
+  top:9px !important;
+  right:9px !important;
+  width:30px !important;
+  height:30px !important;
+  background:#000 !important;
+  color:#fff !important;
+  border:1px solid #fff !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  font:700 20px/26px Arial,sans-serif !important;
+  cursor:pointer !important;
+}
+#homeNotificationPanel .home-notification-close:hover,
+#homeProfilePanel .home-profile-close:hover{
+  background:#fff !important;
+  color:#000 !important;
+}
+
+/* notification content */
+#homeNotificationPanel .home-notification-message{
+  background:#000 !important;
+  color:#fff !important;
+  border:1px solid #fff !important;
+  padding:22px 14px !important;
+  font:700 14px/1.6 monospace !important;
+  letter-spacing:1px !important;
+  text-align:center !important;
+  text-transform:uppercase !important;
+}
+
+/* profile */
+#homeProfilePanel .home-profile-title{
+  color:#fff !important;
+  font:900 18px/1.2 monospace !important;
+  letter-spacing:2px !important;
+  margin-bottom:20px !important;
+  text-align:center !important;
+}
+#homeProfilePanel label{
+  display:block !important;
+  color:#fff !important;
+  font:700 10px/1 monospace !important;
+  letter-spacing:1px !important;
+  margin:15px 0 7px !important;
+}
+#homeProfilePanel input[type="text"]{
+  width:100% !important;
+  height:40px !important;
+  background:#000 !important;
+  color:#fff !important;
+  border:1px solid #fff !important;
+  border-radius:0 !important;
+  padding:0 10px !important;
+  box-sizing:border-box !important;
+  font:700 13px monospace !important;
+  outline:none !important;
+}
+#homeProfilePanel input[type="text"]:focus{
+  border-width:2px !important;
+}
+#homeProfilePanel input[type="file"]{
+  width:100% !important;
+  color:#fff !important;
+  background:#000 !important;
+  border:1px solid #fff !important;
+  padding:8px !important;
+  box-sizing:border-box !important;
+  font:10px monospace !important;
+}
+#homeProfilePanel .home-profile-preview{
+  width:82px !important;
+  height:82px !important;
+  margin:15px auto !important;
+  display:block !important;
+  object-fit:cover !important;
+  border:2px solid #fff !important;
+  border-radius:0 !important;
+  image-rendering:auto !important;
+}
+#homeProfilePanel .home-profile-action{
+  width:100% !important;
+  min-height:40px !important;
+  margin-top:10px !important;
+  padding:9px !important;
+  background:#fff !important;
+  color:#000 !important;
+  border:2px solid #fff !important;
+  border-radius:0 !important;
+  font:900 11px monospace !important;
+  letter-spacing:1px !important;
+  cursor:pointer !important;
+}
+#homeProfilePanel .home-profile-action:hover{
+  background:#000 !important;
+  color:#fff !important;
+}
+
+/* iPhone compact mode */
+@media (max-width:480px){
+  .home-notification,
+  .home-profile-wrap{
+    top:calc(54px + env(safe-area-inset-top)) !important;
+  }
+  .home-notification .home-notification-bell,
+  #homeProfileButton{
+    width:30px !important;
+    height:30px !important;
+    min-width:30px !important;
+    min-height:30px !important;
+    box-shadow:3px 3px 0 #fff !important;
+  }
+  #homeNotificationPanel .home-notification-window,
+  #homeProfilePanel .home-profile-window{
+    width:calc(100vw - 28px) !important;
+    padding:46px 16px 18px !important;
+    box-shadow:5px 5px 0 #fff !important;
+  }
+}
+</style>
+
 </head><body>
 <div id="bootSplash" aria-hidden="true"><img id="bootBob" alt="BOB"><div class="boot-text">BOB</div></div>
 <section class="screen home" id="homeScreen">
@@ -2476,6 +2711,49 @@ hideBootSplash();
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
   else init();
+})();
+</script>
+
+
+<script id="bob-ultimate-ui-js">
+(function(){
+  function start(){
+    const n=document.getElementById('homeNotificationPanel');
+    const p=document.getElementById('homeProfilePanel');
+    const nb=document.getElementById('homeNotificationBell');
+    const pb=document.getElementById('homeProfileButton');
+    const nc=document.getElementById('homeNotificationClose');
+    const pc=document.getElementById('homeProfileClose');
+
+    function closeAll(){
+      if(n) n.hidden=true;
+      if(p) p.hidden=true;
+      document.body.style.overflow='';
+    }
+    function open(x){
+      if(!x) return;
+      if(n && x===n) n.hidden=false;
+      if(p && x===p) p.hidden=false;
+      document.body.style.overflow='hidden';
+    }
+
+    if(nb) nb.onclick=function(e){e.preventDefault();e.stopPropagation();open(n);};
+    if(pb) pb.onclick=function(e){e.preventDefault();e.stopPropagation();open(p);};
+    if(nc) nc.onclick=function(e){e.preventDefault();e.stopPropagation();closeAll();};
+    if(pc) pc.onclick=function(e){e.preventDefault();e.stopPropagation();closeAll();};
+
+    [n,p].forEach(function(x){
+      if(!x) return;
+      x.addEventListener('click',function(e){
+        if(e.target===x) closeAll();
+      });
+    });
+    document.addEventListener('keydown',function(e){
+      if(e.key==='Escape') closeAll();
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start);
+  else start();
 })();
 </script>
 
