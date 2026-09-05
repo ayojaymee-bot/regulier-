@@ -959,9 +959,67 @@ body::before{
 }
 </style>
 
+
+<style id="bob-notification-profile-fix">
+#homeNotificationPanel .home-notification-window,
+#homeNotificationPanel .home-notification-message {
+  background:#000 !important;
+  color:#fff !important;
+}
+#homeNotificationPanel .home-notification-message {
+  color:#fff !important;
+  background:#000 !important;
+}
+
+/* Make sure the profile button is visible on the home screen. */
+.home-profile-wrap{
+  position:absolute !important;
+  top:calc(52px + env(safe-area-inset-top)) !important;
+  right:8px !important;
+  z-index:1001 !important;
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
+#homeProfileButton{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  width:28px !important;
+  height:28px !important;
+  min-width:28px !important;
+  min-height:28px !important;
+  padding:0 !important;
+  background:#000 !important;
+  color:#fff !important;
+  border:1px solid #fff !important;
+  border-radius:4px !important;
+  font-size:14px !important;
+}
+</style>
+
 </head><body>
 <div id="bootSplash" aria-hidden="true"><img id="bootBob" alt="BOB"><div class="boot-text">BOB</div></div>
-<section class="screen home" id="homeScreen"><div class="home-notification" id="homeNotificationWrap">
+<section class="screen home" id="homeScreen">
+<div class="home-profile-wrap" id="homeProfileWrap">
+  <button class="home-profile-button" id="homeProfileButton" aria-label="Profil">●</button>
+  <div id="homeProfilePanel" hidden aria-modal="true" role="dialog">
+    <div class="home-profile-window">
+      <button class="home-profile-close" id="homeProfileClose" aria-label="Fermer">×</button>
+      <div class="home-profile-title">PROFIL</div>
+      <label for="homeProfileUsername">PSEUDO</label>
+      <input id="homeProfileUsername" type="text" maxlength="30" autocomplete="off">
+      <label for="homeProfilePhoto">PHOTO DE PROFIL</label>
+      <input id="homeProfilePhoto" type="file" accept="image/*">
+      <img id="homeProfilePreview" class="home-profile-preview" alt="Photo de profil" hidden>
+      <button id="homeProfileSave" class="home-profile-action">ENREGISTRER</button>
+      <button id="homeProfileLogout" class="home-profile-action">SE DÉCONNECTER</button>
+    </div>
+  </div>
+</div>
+<div class="home-notification" id="homeNotificationWrap">
   <button class="home-notification-bell" id="homeNotificationBell" aria-label="Notifications">🔔</button>
 </div>
 <div id="homeNotificationPanel" hidden aria-modal="true" role="dialog">
@@ -2282,6 +2340,38 @@ hideBootSplash();
       }
     });
   });
+})();
+</script>
+
+
+<script id="bob-profile-button-fix">
+(function(){
+  function init(){
+    const btn = document.getElementById('homeProfileButton');
+    const panel = document.getElementById('homeProfilePanel');
+    const close = document.getElementById('homeProfileClose');
+    if(!btn || !panel) return;
+    btn.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      panel.hidden = false;
+      document.body.style.overflow = 'hidden';
+    };
+    if(close) close.onclick = function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      panel.hidden = true;
+      document.body.style.overflow = '';
+    };
+    panel.onclick = function(e){
+      if(e.target === panel){
+        panel.hidden = true;
+        document.body.style.overflow = '';
+      }
+    };
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
 </script>
 
