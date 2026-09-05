@@ -1000,6 +1000,96 @@ body::before{
 }
 </style>
 
+
+<style id="bob-polish">
+/* Finition générale des deux fenêtres */
+#homeNotificationPanel,
+#homeProfilePanel{
+  -webkit-backdrop-filter:blur(3px);
+  backdrop-filter:blur(3px);
+}
+
+#homeNotificationPanel .home-notification-window,
+#homeProfilePanel .home-profile-window{
+  border:2px solid #fff !important;
+  box-shadow:8px 8px 0 #fff !important;
+  border-radius:0 !important;
+  animation:bobModalIn .16s ease-out;
+}
+
+@keyframes bobModalIn{
+  from{transform:scale(.94);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+
+/* Croix plus nette */
+#homeNotificationPanel .home-notification-close,
+#homeProfilePanel .home-profile-close{
+  font-family:Arial,sans-serif !important;
+  font-weight:700 !important;
+  font-size:20px !important;
+  line-height:24px !important;
+  transition:background .12s,color .12s !important;
+}
+#homeNotificationPanel .home-notification-close:hover,
+#homeProfilePanel .home-profile-close:hover{
+  background:#fff !important;
+  color:#000 !important;
+}
+
+/* Message de la cloche */
+#homeNotificationPanel .home-notification-message{
+  font-family:monospace !important;
+  font-weight:700 !important;
+  letter-spacing:.4px !important;
+  text-transform:uppercase !important;
+  padding:8px 4px !important;
+}
+
+/* Boutons profil : cohérents, blancs/noirs */
+#homeProfilePanel .home-profile-window{
+  font-family:monospace !important;
+}
+#homeProfilePanel input[type="text"],
+#homeProfilePanel input[type="file"]{
+  width:100% !important;
+  box-sizing:border-box !important;
+  background:#000 !important;
+  color:#fff !important;
+  border:1px solid #fff !important;
+  border-radius:0 !important;
+  padding:9px !important;
+}
+#homeProfilePanel input[type="file"]{
+  font-size:11px !important;
+}
+#homeProfilePanel .home-profile-action{
+  width:100% !important;
+  margin-top:9px !important;
+  padding:10px !important;
+  background:#fff !important;
+  color:#000 !important;
+  border:1px solid #fff !important;
+  border-radius:0 !important;
+  font-family:monospace !important;
+  font-weight:700 !important;
+  cursor:pointer !important;
+}
+#homeProfilePanel .home-profile-action:hover{
+  background:#000 !important;
+  color:#fff !important;
+}
+#homeProfilePanel .home-profile-preview{
+  display:block !important;
+  width:72px !important;
+  height:72px !important;
+  object-fit:cover !important;
+  margin:10px auto !important;
+  border:1px solid #fff !important;
+  border-radius:50% !important;
+}
+</style>
+
 </head><body>
 <div id="bootSplash" aria-hidden="true"><img id="bootBob" alt="BOB"><div class="boot-text">BOB</div></div>
 <section class="screen home" id="homeScreen">
@@ -2371,6 +2461,20 @@ hideBootSplash();
     };
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+
+
+<script id="bob-polish-js">
+(function(){
+  function init(){
+    const btn=document.getElementById('homeProfileButton');
+    if(!btn) return;
+    btn.setAttribute('title','Profil');
+    btn.setAttribute('aria-label','Ouvrir le profil');
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
   else init();
 })();
 </script>
