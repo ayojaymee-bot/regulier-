@@ -4518,6 +4518,26 @@ if(typeof oldShow==="function"){
   // Do not replace it globally; the original game code remains authoritative.
 }
 refreshHub();
+
+/* Robust launcher for the new arcade cards. */
+choice?.addEventListener("click",function(e){
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.id==="bobGameChoiceClose"){ e.preventDefault(); e.stopPropagation(); choice.hidden=true; return; }
+  if(b.id==="bobChooseFlappy"){ e.preventDefault(); e.stopPropagation(); showOnly(flappy); return; }
+  if(b.id==="bobChooseRunner"){ e.preventDefault(); e.stopPropagation(); showOnly(runner); return; }
+  if(b.id==="bobChooseDoodle"){
+    e.preventDefault(); e.stopPropagation(); choice.hidden=true;
+    const d=$("doodleOverlay");
+    if(d){ d.hidden=false; d.classList.add("open"); d.setAttribute("aria-hidden","false"); document.body.style.overflow="hidden"; window.dispatchEvent(new Event("resize")); }
+    return;
+  }
+  if(b.id==="bobChooseSoccer"){
+    e.preventDefault(); e.stopPropagation(); choice.hidden=true;
+    const s=$("bobHeadSoccer");
+    if(s){ s.hidden=false; document.body.style.overflow="hidden"; window.dispatchEvent(new Event("resize")); }
+  }
+},true);
+window.openBOBArcade=function(){ showOnly(choice); refreshHub(); };
 })();
 </script>
 
