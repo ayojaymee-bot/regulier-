@@ -1667,7 +1667,11 @@ const dataUri="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT
 
     if(bobSprite.complete && bobSprite.naturalWidth){
       ctx.imageSmoothingEnabled=false;
+      ctx.save();
+      if(window.BOB_ARCADE_FILTER)ctx.filter=window.BOB_ARCADE_FILTER;
       ctx.drawImage(bobSprite,Math.round(player.x),Math.round(player.y),player.w,player.h);
+      ctx.restore();
+      if(window.BOB_ARCADE_DRAW_ACCESSORY)window.BOB_ARCADE_DRAW_ACCESSORY(ctx,player.x,player.y,player.w,player.h);
     }else{
       ctx.fillStyle="#fff";ctx.fillRect(player.x+9,player.y+25,40,35);
     }
@@ -2995,11 +2999,143 @@ hideBootSplash();
 
 <!-- BOB HEAD SOCCER GAME COMPLETE -->
 <div id="bobGameChoice" class="bob-game-overlay" hidden>
-  <div class="bob-game-choice"><div class="bob-game-kicker">BOB // ARCADE</div><div class="bob-game-title">CHOISIS TON JEU</div>
-  <button class="bob-game-choice-btn" id="bobChooseDoodle">DOODLE JUMP</button>
-  <button class="bob-game-choice-btn" id="bobChooseSoccer">HEAD SOCCER</button>
-  <button class="bob-game-close" id="bobGameChoiceClose">RETOUR</button></div>
+  <div class="bob-arcade-hub">
+    <div class="bob-arcade-brand">BOB // ARCADE</div>
+    <div class="bob-arcade-heading">
+      <div>
+        <div class="bob-arcade-title">BOB ARCADE</div>
+        <div class="bob-arcade-sub">CHOISIS TON MODE</div>
+      </div>
+      <button class="bob-arcade-garage" id="bobOpenGarage" aria-label="Personnaliser BOB">✦</button>
+    </div>
+
+    <div class="bob-arcade-profile">
+      <div class="bob-mini-avatar" id="bobArcadeAvatar"></div>
+      <div class="bob-arcade-profile-copy">
+        <b id="bobArcadePlayerName">BOB</b>
+        <span id="bobArcadeProfileStats">NIVEAU 1 • 0 XP</span>
+      </div>
+    </div>
+
+    <div class="bob-game-grid">
+      <button class="bob-game-card" id="bobChooseDoodle">
+        <span class="bob-game-icon">↑</span>
+        <span><b>DOODLE JUMP</b><small>ESCALADE INFINIE</small></span>
+        <em>01</em>
+      </button>
+      <button class="bob-game-card" id="bobChooseSoccer">
+        <span class="bob-game-icon">⚽</span>
+        <span><b>HEAD SOCCER</b><small>1 VS 1 • BUT À BUT</small></span>
+        <em>02</em>
+      </button>
+      <button class="bob-game-card" id="bobChooseFlappy">
+        <span class="bob-game-icon">◈</span>
+        <span><b>FLAPPY BOB</b><small>PASSE LES PORTES</small></span>
+        <em>03</em>
+      </button>
+      <button class="bob-game-card" id="bobChooseRunner">
+        <span class="bob-game-icon">»</span>
+        <span><b>BOB RUNNER</b><small>COURS • SAUTE • SURVIS</small></span>
+        <em>04</em>
+      </button>
+    </div>
+
+    <div class="bob-arcade-bottom">
+      <button class="bob-arcade-small" id="bobOpenChallenges">🏆 DÉFIS & RECORDS</button>
+      <button class="bob-game-close" id="bobGameChoiceClose">RETOUR</button>
+    </div>
+  </div>
 </div>
+
+<div id="bobFlappy" class="bob-game-overlay" hidden>
+  <div class="bob-extra-game">
+    <div class="bob-extra-top">
+      <button class="bob-extra-back" id="bobFlappyBack">←</button>
+      <div><b>FLAPPY BOB</b><small id="bobFlappyModeLabel">NORMAL</small></div>
+      <div class="bob-extra-score"><span id="bobFlappyScore">0</span><small>BEST <b id="bobFlappyBest">0</b></small></div>
+    </div>
+    <div class="bob-canvas-wrap"><canvas id="bobFlappyCanvas" width="420" height="700"></canvas></div>
+    <div class="bob-extra-controls">
+      <button id="bobFlappyMode">MODE : NORMAL</button>
+      <button id="bobFlappyStart">JOUER</button>
+    </div>
+    <div class="bob-extra-help">TOUCHE / ESPACE / CLIQUE POUR VOLER</div>
+  </div>
+</div>
+
+<div id="bobRunner" class="bob-game-overlay" hidden>
+  <div class="bob-extra-game">
+    <div class="bob-extra-top">
+      <button class="bob-extra-back" id="bobRunnerBack">←</button>
+      <div><b>BOB RUNNER</b><small id="bobRunnerModeLabel">NORMAL</small></div>
+      <div class="bob-extra-score"><span id="bobRunnerScore">0</span><small>BEST <b id="bobRunnerBest">0</b></small></div>
+    </div>
+    <div class="bob-canvas-wrap"><canvas id="bobRunnerCanvas" width="760" height="430"></canvas></div>
+    <div class="bob-extra-controls">
+      <button id="bobRunnerMode">MODE : NORMAL</button>
+      <button id="bobRunnerStart">JOUER</button>
+    </div>
+    <div class="bob-extra-help">ESPACE / ↑ / TOUCHE POUR SAUTER • DOUBLE SAUT DÉBLOQUÉ À 50</div>
+  </div>
+</div>
+
+<div id="bobArcadeGarage" class="bob-game-overlay" hidden>
+  <div class="bob-garage">
+    <div class="bob-garage-head">
+      <div><b>BOB GARAGE</b><small>PERSONNALISE TON PERSONNAGE</small></div>
+      <button id="bobGarageClose">×</button>
+    </div>
+    <div class="bob-garage-preview">
+      <div id="bobGarageAvatar" class="bob-garage-avatar"></div>
+      <div><b id="bobGarageNamePreview">BOB</b><span>APERÇU</span></div>
+    </div>
+
+    <label class="bob-field">NOM
+      <input id="bobArcadeName" maxlength="14" placeholder="BOB">
+    </label>
+
+    <div class="bob-option-title">SKIN</div>
+    <div class="bob-option-grid" id="bobSkinOptions">
+      <button data-skin="green" class="selected">VERT</button>
+      <button data-skin="white">BLANC</button>
+      <button data-skin="red">ROUGE</button>
+      <button data-skin="blue">BLEU</button>
+      <button data-skin="purple">VIOLET</button>
+      <button data-skin="gold">OR</button>
+    </div>
+
+    <div class="bob-option-title">ACCESSOIRE</div>
+    <div class="bob-option-grid" id="bobHatOptions">
+      <button data-hat="none" class="selected">RIEN</button>
+      <button data-hat="cap">CASQUETTE</button>
+      <button data-hat="crown">COURONNE</button>
+      <button data-hat="horns">CORNES</button>
+      <button data-hat="halo">HALO</button>
+      <button data-hat="visor">VISIÈRE</button>
+    </div>
+
+    <div class="bob-option-title">TRAÎNÉE</div>
+    <div class="bob-option-grid" id="bobTrailOptions">
+      <button data-trail="none" class="selected">AUCUNE</button>
+      <button data-trail="stars">ÉTOILES</button>
+      <button data-trail="pixels">PIXELS</button>
+      <button data-trail="speed">VITESSE</button>
+    </div>
+
+    <button id="bobGarageSave" class="bob-garage-save">SAUVEGARDER LE BOB</button>
+  </div>
+</div>
+
+<div id="bobArcadeChallenges" class="bob-game-overlay" hidden>
+  <div class="bob-challenges">
+    <div class="bob-garage-head">
+      <div><b>CHALLENGES</b><small>TES RECORDS • TES OBJECTIFS</small></div>
+      <button id="bobChallengesClose">×</button>
+    </div>
+    <div id="bobChallengesList" class="bob-challenges-list"></div>
+  </div>
+</div>
+
 <div id="bobHeadSoccer" class="bob-game-overlay" hidden>
   <div class="bob-soccer-wrap">
     <div class="bob-soccer-top"><button id="bobSoccerBack" class="bob-soccer-back">←</button><div class="bob-soccer-score"><span id="bobScoreA">0</span> — <span id="bobScoreB">0</span></div><div class="bob-soccer-time" id="bobSoccerTime">90</div><button id="bobSoccerReset" class="bob-soccer-reset">RESET</button></div>
@@ -4068,6 +4204,341 @@ button:focus-visible,input:focus-visible{
       ".bob-pressed{opacity:.78!important}";
     document.head.appendChild(style);
   });
+})();
+</script>
+
+
+<style id="bob-arcade-expansion-css">
+.bob-arcade-hub,.bob-extra-game,.bob-garage,.bob-challenges{
+  width:min(94vw,520px);max-height:92vh;overflow:auto;
+  background:#030303;color:#fff;border:2px solid #fff;
+  box-shadow:8px 8px 0 #fff;font-family:"Courier New",monospace;
+  box-sizing:border-box;
+}
+.bob-arcade-hub{padding:20px}
+.bob-arcade-brand{font-size:9px;letter-spacing:3px;color:#777;margin-bottom:12px}
+.bob-arcade-heading{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #292929;padding-bottom:15px}
+.bob-arcade-title{font-size:31px;font-weight:900;letter-spacing:3px}
+.bob-arcade-sub{font-size:10px;color:#777;letter-spacing:2px;margin-top:4px}
+.bob-arcade-garage{width:42px;height:42px;background:#000;color:#fff;border:1px solid #fff;font-size:19px;cursor:pointer}
+.bob-arcade-profile{display:flex;align-items:center;gap:11px;padding:13px 0}
+.bob-mini-avatar{width:48px;height:48px;flex:none;border:1px solid #444;border-radius:12px;background:#111;position:relative;overflow:hidden}
+.bob-mini-avatar::before,.bob-garage-avatar::before{content:"";position:absolute;left:12%;right:12%;top:17%;bottom:5%;border:3px solid #000;border-radius:48% 48% 43% 43%;background:var(--bob-skin,#a9bf1b)}
+.bob-mini-avatar::after{content:"••";position:absolute;left:0;right:0;top:35%;text-align:center;color:#000;font:bold 16px monospace;letter-spacing:8px}
+.bob-arcade-profile-copy{display:flex;flex-direction:column;gap:4px}
+.bob-arcade-profile-copy b{font-size:14px}.bob-arcade-profile-copy span{font-size:9px;color:#777;letter-spacing:1px}
+.bob-game-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bob-game-card{position:relative;min-height:104px;padding:13px;background:#070707;color:#fff;border:1px solid #292929;text-align:left;display:grid;grid-template-columns:42px 1fr 22px;gap:9px;align-items:center;cursor:pointer;transition:.16s}
+.bob-game-card:hover{background:#111;border-color:#fff;transform:translateY(-2px)}
+.bob-game-card:active{transform:scale(.98)}
+.bob-game-icon{width:40px;height:40px;display:grid;place-items:center;border:1px solid #555;font-size:19px}
+.bob-game-card b{display:block;font-size:12px;letter-spacing:1px}.bob-game-card small{display:block;color:#666;font-size:8px;margin-top:5px}
+.bob-game-card em{font-size:9px;color:#555;font-style:normal;align-self:start}
+.bob-arcade-bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.bob-arcade-small,.bob-game-close{background:#000;color:#fff;border:1px solid #555;padding:11px 7px;font:900 9px monospace;letter-spacing:.7px;cursor:pointer}
+.bob-game-close{border-color:#fff}
+.bob-arcade-small:hover,.bob-game-close:hover{background:#fff;color:#000}
+
+.bob-extra-game{width:min(96vw,600px);padding:10px;box-shadow:7px 7px 0 #fff}
+.bob-extra-top{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:8px;border-bottom:1px solid #292929;padding-bottom:9px}
+.bob-extra-top>div:nth-child(2){text-align:center}.bob-extra-top b{font-size:15px;letter-spacing:2px}.bob-extra-top small{display:block;color:#777;font-size:8px;margin-top:3px}
+.bob-extra-back{width:40px;height:38px;background:#000;color:#fff;border:1px solid #fff;font-size:19px}
+.bob-extra-score{text-align:right;font:bold 21px monospace}.bob-extra-score small{font-size:8px}
+.bob-canvas-wrap{margin:9px auto 0;border:1px solid #333;background:#000;max-width:100%;overflow:hidden}
+.bob-canvas-wrap canvas{display:block;width:100%;height:auto;image-rendering:pixelated;touch-action:none}
+.bob-extra-controls{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+.bob-extra-controls button{height:42px;background:#000;color:#fff;border:1px solid #fff;font:900 10px monospace;letter-spacing:1px}
+.bob-extra-controls button:last-child{background:#fff;color:#000}
+.bob-extra-help{text-align:center;color:#666;font-size:8px;padding:8px 0 2px;letter-spacing:.4px}
+
+.bob-garage{width:min(94vw,450px);padding:17px}
+.bob-garage-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #292929;padding-bottom:12px}
+.bob-garage-head b{font-size:19px;letter-spacing:2px}.bob-garage-head small{display:block;color:#666;font-size:8px;margin-top:4px}
+.bob-garage-head button{width:34px;height:34px;background:#000;color:#fff;border:1px solid #fff;font-size:22px}
+.bob-garage-preview{display:flex;align-items:center;gap:14px;padding:15px 0}
+.bob-garage-avatar{width:90px;height:90px;position:relative;background:#080808;border:1px solid #292929;border-radius:15px;overflow:hidden}
+.bob-garage-avatar::before{left:14%;right:14%;top:18%;bottom:6%;border-width:4px}
+.bob-garage-avatar::after{content:"••";position:absolute;left:0;right:0;top:38%;text-align:center;color:#000;font:bold 25px monospace;letter-spacing:15px}
+.bob-garage-preview b{display:block;font-size:17px}.bob-garage-preview span{display:block;color:#666;font-size:8px;margin-top:5px}
+.bob-field{display:block;color:#777;font-size:9px;letter-spacing:1px}.bob-field input{display:block;width:100%;margin-top:6px;box-sizing:border-box;background:#000;color:#fff;border:1px solid #444;padding:11px;font:900 12px monospace}
+.bob-option-title{font-size:8px;color:#666;letter-spacing:2px;margin:15px 0 7px}
+.bob-option-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.bob-option-grid button{background:#070707;color:#fff;border:1px solid #292929;padding:9px 4px;font:900 8px monospace}
+.bob-option-grid button.selected{background:#fff;color:#000;border-color:#fff}
+.bob-garage-save{width:100%;margin-top:15px;height:45px;background:#fff;color:#000;border:0;font:900 10px monospace;letter-spacing:1px}
+
+.bob-challenges{width:min(94vw,440px);padding:17px}
+.bob-challenges-list{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+.bob-challenge{display:grid;grid-template-columns:38px 1fr auto;gap:9px;align-items:center;border:1px solid #252525;padding:10px;background:#070707}
+.bob-challenge .ico{font-size:17px;text-align:center}.bob-challenge b{font-size:10px}.bob-challenge small{display:block;color:#666;font-size:8px;margin-top:3px}.bob-challenge strong{font-size:12px}
+
+.bob-flappy-pulse{animation:bobPulse .22s steps(2,end)}@keyframes bobPulse{50%{transform:scale(1.04)}}
+@media(max-width:520px){
+  .bob-arcade-hub{padding:15px}.bob-arcade-title{font-size:25px}
+  .bob-game-grid{grid-template-columns:1fr}
+  .bob-game-card{min-height:76px}
+  .bob-arcade-bottom{grid-template-columns:1fr}
+  .bob-extra-game{width:94vw;padding:8px}
+  .bob-garage{padding:13px}
+}
+</style>
+
+
+<script id="bob-arcade-expansion-js">
+(function(){
+"use strict";
+
+const $=id=>document.getElementById(id);
+const choice=$("bobGameChoice"), flappy=$("bobFlappy"), runner=$("bobRunner"),
+      garage=$("bobArcadeGarage"), challenges=$("bobArcadeChallenges");
+
+const KEY="bobArcadeProfileV2";
+const defaults={name:"BOB",skin:"green",hat:"none",trail:"none",xp:0,
+  best:{flappy:0,runner:0},plays:{flappy:0,runner:0}};
+let profile={...defaults};
+try{profile={...defaults,...JSON.parse(localStorage.getItem(KEY)||"{}"),
+  best:{...defaults.best,...(JSON.parse(localStorage.getItem(KEY)||"{}").best||{})},
+  plays:{...defaults.plays,...(JSON.parse(localStorage.getItem(KEY)||"{}").plays||{})}}}catch(e){}
+function save(){localStorage.setItem(KEY,JSON.stringify(profile));refreshHub();}
+
+const skins={
+ green:"#a9bf1b",white:"#f1f1e8",red:"#c74c4c",blue:"#4b83c5",purple:"#9b6ac7",gold:"#d7ad35"
+};
+function skin(){return skins[profile.skin]||skins.green}
+function refreshHub(){
+  if($("bobArcadePlayerName"))$("bobArcadePlayerName").textContent=profile.name||"BOB";
+  const level=1+Math.floor((profile.xp||0)/100);
+  if($("bobArcadeProfileStats"))$("bobArcadeProfileStats").textContent=`NIVEAU ${level} • ${profile.xp||0} XP`;
+  if($("bobArcadeAvatar"))$("bobArcadeAvatar").style.setProperty("--bob-skin",skin());
+  if($("bobGarageAvatar"))$("bobGarageAvatar").style.setProperty("--bob-skin",skin());
+  if($("bobGarageNamePreview"))$("bobGarageNamePreview").textContent=profile.name||"BOB";
+}
+function showOnly(el){
+  [choice,flappy,runner,garage,challenges].forEach(x=>{if(x)x.hidden=x!==el});
+  document.body.style.overflow=el?"hidden":"";
+}
+function openHub(){showOnly(choice);refreshHub()}
+function addXP(n){profile.xp=(profile.xp||0)+n;save()}
+
+$("bobOpenGarage")?.addEventListener("click",()=>{showOnly(garage);loadGarage()});
+$("bobGarageClose")?.addEventListener("click",openHub);
+$("bobOpenChallenges")?.addEventListener("click",()=>{showOnly(challenges);renderChallenges()});
+$("bobChallengesClose")?.addEventListener("click",openHub);
+
+function bindOptions(id,key){
+  document.querySelectorAll("#"+id+" button").forEach(b=>{
+    b.addEventListener("click",()=>{
+      document.querySelectorAll("#"+id+" button").forEach(x=>x.classList.remove("selected"));
+      b.classList.add("selected");profile[key]=b.dataset[key];
+      refreshHub();
+      drawGaragePreview();
+    });
+  });
+}
+function loadGarage(){
+  $("bobArcadeName").value=profile.name||"BOB";
+  ["bobSkinOptions","bobHatOptions","bobTrailOptions"].forEach(id=>{
+    document.querySelectorAll("#"+id+" button").forEach(b=>{
+      const key=id.includes("Skin")?"skin":id.includes("Hat")?"hat":"trail";
+      b.classList.toggle("selected",b.dataset[key]===profile[key]);
+    });
+  });
+  refreshHub();drawGaragePreview();
+}
+function drawGaragePreview(){
+  const el=$("bobGarageAvatar");if(!el)return;
+  el.style.setProperty("--bob-skin",skin());
+  el.dataset.hat=profile.hat;el.dataset.trail=profile.trail;
+}
+bindOptions("bobSkinOptions","skin");bindOptions("bobHatOptions","hat");bindOptions("bobTrailOptions","trail");
+$("bobGarageSave")?.addEventListener("click",()=>{
+  profile.name=($("bobArcadeName").value||"BOB").trim().slice(0,14).toUpperCase()||"BOB";
+  save();openHub();
+});
+
+/* ---------- Canvas character renderer ---------- */
+function drawBob(c,x,y,w,h,opts={}){
+  const s=opts.scale||1, col=skins[opts.skin||profile.skin]||skins.green;
+  c.save();c.translate(x,y);c.scale(s,s);
+  if((opts.trail||profile.trail)!=="none"){
+    const tr=opts.trail||profile.trail;
+    for(let i=1;i<=4;i++){
+      c.globalAlpha=.11*(5-i);
+      c.fillStyle="#fff";
+      c.fillRect(-i*7,h*.62+i*2,3+i,h*.22);
+    }
+    c.globalAlpha=1;
+  }
+  // hat
+  const hat=opts.hat||profile.hat;
+  c.fillStyle=col;c.strokeStyle="#000";c.lineWidth=Math.max(2,w*.035);
+  c.beginPath();c.arc(w*.5,h*.43,w*.43,0,Math.PI*2);c.fill();c.stroke();
+  // tiny hair spikes
+  c.beginPath();c.moveTo(w*.22,h*.16);c.lineTo(w*.31,h*.03);c.lineTo(w*.38,h*.15);c.lineTo(w*.49,h*.01);c.lineTo(w*.56,h*.15);c.lineTo(w*.7,h*.04);c.lineTo(w*.76,h*.19);c.stroke();
+  if(hat==="cap"){c.fillStyle="#111";c.fillRect(w*.23,h*.09,w*.48,h*.09);c.fillRect(w*.55,h*.16,w*.28,h*.045)}
+  if(hat==="crown"){c.fillStyle="#d7ad35";c.beginPath();c.moveTo(w*.25,h*.13);c.lineTo(w*.29,h*.01);c.lineTo(w*.42,h*.11);c.lineTo(w*.5,0);c.lineTo(w*.6,h*.11);c.lineTo(w*.73,h*.01);c.lineTo(w*.77,h*.14);c.closePath();c.fill();c.stroke()}
+  if(hat==="horns"){c.fillStyle="#fff";c.beginPath();c.moveTo(w*.24,h*.15);c.lineTo(w*.16,h*.01);c.lineTo(w*.34,h*.12);c.closePath();c.fill();c.stroke();c.beginPath();c.moveTo(w*.66,h*.12);c.lineTo(w*.84,h*.01);c.lineTo(w*.76,h*.15);c.closePath();c.fill();c.stroke()}
+  if(hat==="halo"){c.strokeStyle="#fff";c.lineWidth=3;c.beginPath();c.ellipse(w*.5,h*.02,w*.3,h*.08,0,0,Math.PI*2);c.stroke()}
+  if(hat==="visor"){c.fillStyle="#111";c.fillRect(w*.21,h*.25,w*.58,h*.12)}
+  // eyes
+  c.fillStyle="#f4f0df";c.strokeStyle="#000";c.lineWidth=Math.max(2,w*.025);
+  c.beginPath();c.ellipse(w*.39,h*.42,w*.15,h*.14,0,0,Math.PI*2);c.ellipse(w*.61,h*.42,w*.15,h*.14,0,0,Math.PI*2);c.fill();c.stroke();
+  c.fillStyle="#000";c.beginPath();c.arc(w*.42,h*.43,w*.045,0,Math.PI*2);c.arc(w*.64,h*.43,w*.045,0,Math.PI*2);c.fill();
+  // mouth
+  c.strokeStyle="#000";c.lineWidth=Math.max(2,w*.025);c.beginPath();c.moveTo(w*.3,h*.65);c.quadraticCurveTo(w*.5,h*.73,w*.7,h*.65);c.stroke();
+  // legs
+  c.lineWidth=Math.max(3,w*.055);c.lineCap="round";c.beginPath();
+  c.moveTo(w*.4,h*.76);c.lineTo(w*.38,h*.98);c.moveTo(w*.58,h*.76);c.lineTo(w*.63,h*.98);c.stroke();
+  c.restore();
+}
+
+/* ---------- FLAPPY BOB ---------- */
+(function(){
+  const c=$("bobFlappyCanvas"),ctx=c.getContext("2d"),start=$("bobFlappyStart"),modeBtn=$("bobFlappyMode");
+  if(!c)return;
+  let run=false,raf=0,last=0,score=0,best=Number(profile.best.flappy||0),mode=0;
+  const modes=[{n:"ZEN",gap:185,speed:145,grav:650},{n:"NORMAL",gap:150,speed:175,grav:760},{n:"HARD",gap:125,speed:215,grav:850}];
+  let bird,obs=[],spawn=0;
+  function modeData(){return modes[mode]}
+  function resize(){const r=c.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);c.width=r.width*d;c.height=r.height*d;ctx.setTransform(d,0,0,d,0,0)}
+  function W(){return c.clientWidth}function H(){return c.clientHeight}
+  function reset(){score=0;bird={x:W()*.24,y:H()*.48,vy:0,w:50,h:58};obs=[];spawn=0;updateLabels();draw()}
+  function flap(){if(!run){startGame();return}bird.vy=-270}
+  function spawnPipe(){const m=modeData(),top=80+Math.random()*(H()-m.gap-160);obs.push({x:W()+25,top,gap:m.gap,w:58,passed:false})}
+  function update(dt){
+    const m=modeData();bird.vy+=m.grav*dt;bird.y+=bird.vy*dt;
+    spawn-=dt;if(spawn<=0){spawnPipe();spawn=.95+Math.random()*.4}
+    for(const o of obs)o.x-=m.speed*dt;
+    obs=obs.filter(o=>o.x>-90);
+    for(const o of obs){
+      if(!o.passed&&o.x+o.w<bird.x){o.passed=true;score++;profile.xp+=2;updateLabels()}
+      const bx=bird.x-bird.w*.35,by=bird.y-bird.h*.38,bw=bird.w*.7,bh=bird.h*.72;
+      if(bx+bw>o.x&&bx<o.x+o.w&&(by<o.top||by+bh>o.top+o.gap))return gameOver();
+    }
+    if(bird.y-bird.h*.45<0||bird.y+bird.h*.45>H())return gameOver();
+  }
+  function draw(){
+    const w=W(),h=H();ctx.clearRect(0,0,w,h);ctx.fillStyle="#000";ctx.fillRect(0,0,w,h);
+    ctx.fillStyle="#111";for(let y=25;y<h;y+=55)for(let x=15;x<w;x+=70)ctx.fillRect(x,y,2,2);
+    ctx.fillStyle="#fff";for(const o of obs){ctx.fillRect(o.x,0,o.w,o.top);ctx.fillRect(o.x,o.top+o.gap,o.w,h-o.top-o.gap);ctx.fillRect(o.x-4,o.top-5,o.w+8,5);ctx.fillRect(o.x-4,o.top+o.gap,o.w+8,5)}
+    drawBob(ctx,bird.x-bird.w*.5,bird.y-bird.h*.5,bird.w,bird.h,{skin:profile.skin,hat:profile.hat,trail:profile.trail});
+    ctx.fillStyle="#fff";ctx.font="900 11px monospace";ctx.fillText("ALTITUDE  "+String(score).padStart(3,"0"),12,18);
+  }
+  function gameOver(){run=false;cancelAnimationFrame(raf);if(score>best){best=score;profile.best.flappy=best}profile.plays.flappy++;addXP(Math.max(10,score*5));save();start.textContent="REJOUER";draw()}
+  function loop(now){if(!run)return;const dt=Math.min(.032,(now-last)/1000||.016);last=now;update(dt);draw();raf=requestAnimationFrame(loop)}
+  function startGame(){resize();reset();run=true;start.textContent="EN JEU";last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
+  function updateLabels(){$("bobFlappyScore").textContent=score;$("bobFlappyBest").textContent=best;$("bobFlappyModeLabel").textContent=modes[mode].n;modeBtn.textContent="MODE : "+modes[mode].n}
+  modeBtn.onclick=()=>{mode=(mode+1)%modes.length;updateLabels();reset()};
+  start.onclick=startGame;c.addEventListener("pointerdown",e=>{e.preventDefault();flap()});
+  document.addEventListener("keydown",e=>{if(flappy.hidden)return;if(e.code==="Space"||e.key==="ArrowUp"){e.preventDefault();flap()}});
+  $("bobFlappyBack").onclick=()=>{run=false;cancelAnimationFrame(raf);openHub()};
+  reset();updateLabels();
+})();
+
+/* ---------- BOB RUNNER ---------- */
+(function(){
+  const c=$("bobRunnerCanvas"),ctx=c.getContext("2d"),start=$("bobRunnerStart"),modeBtn=$("bobRunnerMode");
+  if(!c)return;
+  let run=false,raf=0,last=0,score=0,best=Number(profile.best.runner||0),mode=0,jumpCount=0;
+  const modes=[{n:"ZEN",speed:230,grav:1750},{n:"NORMAL",speed:290,grav:1900},{n:"HARD",speed:355,grav:2050}];
+  let p,obs=[],coins=[],spawn=0,coinSpawn=0,ground=0;
+  function resize(){const r=c.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);c.width=r.width*d;c.height=r.height*d;ctx.setTransform(d,0,0,d,0,0)}
+  function W(){return c.clientWidth}function H(){return c.clientHeight}
+  function reset(){score=0;jumpCount=0;ground=H()*.82;p={x:W()*.17,y:ground-62,w:55,h:62,vy:0,on:true};obs=[];coins=[];spawn=.8;coinSpawn=.5;labels();draw()}
+  function jump(){if(!run){startGame();return}const canDouble=score>=50;if(p.on||canDouble&&jumpCount<2){p.vy=-620;p.on=false;jumpCount++}}
+  function update(dt){
+    const m=modes[mode];ground=H()*.82;p.vy+=m.grav*dt;p.y+=p.vy*dt;
+    if(p.y+p.h>=ground){p.y=ground-p.h;p.vy=0;if(!p.on)jumpCount=0;p.on=true}
+    spawn-=dt;if(spawn<=0){obs.push({x:W()+30,w:26+Math.random()*24,h:30+Math.random()*55});spawn=Math.max(.48,.95-(score/700))+Math.random()*.35}
+    coinSpawn-=dt;if(coinSpawn<=0){coins.push({x:W()+20,y:ground-80-Math.random()*100,r:7});coinSpawn=.7+Math.random()*.8}
+    for(const o of obs)o.x-=m.speed*dt;for(const q of coins)q.x-=m.speed*dt;
+    obs=obs.filter(o=>o.x>-80);coins=coins.filter(q=>q.x>-30);
+    for(const o of obs){o.y=ground-o.h;if(p.x+p.w*.8>o.x&&p.x+p.w*.2<o.x+o.w&&p.y+p.h>o.y+4)return gameOver()}
+    for(const q of coins){if(Math.hypot((p.x+p.w*.5)-q.x,(p.y+p.h*.5)-q.y)<32){q.hit=true;score+=5;profile.xp+=1}}coins=coins.filter(q=>!q.hit);
+    score+=dt*2;labels();
+  }
+  function draw(){
+    const w=W(),h=H();ctx.clearRect(0,0,w,h);ctx.fillStyle="#000";ctx.fillRect(0,0,w,h);
+    ctx.fillStyle="#0e0e0e";for(let x=0;x<w;x+=42)ctx.fillRect(x,ground+2,26,2);
+    ctx.fillStyle="#fff";ctx.fillRect(0,ground,w,3);
+    for(const o of obs){ctx.fillStyle="#fff";ctx.fillRect(o.x,o.y,o.w,o.h);ctx.fillStyle="#000";ctx.fillRect(o.x+5,o.y+5,o.w-10,4)}
+    for(const q of coins){ctx.strokeStyle="#fff";ctx.lineWidth=3;ctx.beginPath();ctx.arc(q.x,q.y,q.r,0,Math.PI*2);ctx.stroke();ctx.fillStyle="#fff";ctx.fillRect(q.x-2,q.y-2,4,4)}
+    drawBob(ctx,p.x,p.y,p.w,p.h,{skin:profile.skin,hat:profile.hat,trail:profile.trail});
+    ctx.fillStyle="#fff";ctx.font="900 11px monospace";ctx.fillText("DIST  "+Math.floor(score),12,18);
+  }
+  function gameOver(){run=false;cancelAnimationFrame(raf);score=Math.floor(score);if(score>best){best=score;profile.best.runner=best}profile.plays.runner++;addXP(Math.max(10,Math.floor(score/3)));save();start.textContent="REJOUER";draw()}
+  function loop(now){if(!run)return;const dt=Math.min(.032,(now-last)/1000||.016);last=now;update(dt);draw();raf=requestAnimationFrame(loop)}
+  function startGame(){resize();reset();run=true;start.textContent="EN JEU";last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
+  function labels(){$("bobRunnerScore").textContent=Math.floor(score);$("bobRunnerBest").textContent=best;$("bobRunnerModeLabel").textContent=modes[mode].n;modeBtn.textContent="MODE : "+modes[mode].n}
+  modeBtn.onclick=()=>{mode=(mode+1)%modes.length;labels();reset()};
+  start.onclick=startGame;c.addEventListener("pointerdown",e=>{e.preventDefault();jump()});
+  document.addEventListener("keydown",e=>{if(runner.hidden)return;if(e.code==="Space"||e.key==="ArrowUp"){e.preventDefault();jump()}});
+  $("bobRunnerBack").onclick=()=>{run=false;cancelAnimationFrame(raf);openHub()};
+  reset();labels();
+})();
+
+/* ---------- Challenges / progression ---------- */
+function renderChallenges(){
+  const list=$("bobChallengesList");if(!list)return;
+  const f=profile.best.flappy||0,r=profile.best.runner||0,d=Number(localStorage.getItem("bobJumpBest")||0);
+  const items=[
+    ["↑","DOODLE","Atteins 5000 points",d,5000],
+    ["◈","FLAPPY","Passe 25 portes",f,25],
+    ["»","RUNNER","Atteins 250 de distance",r,250],
+    ["⚽","SOCCER","Gagne un match","—",""],
+    ["✦","GARAGE","Débloque le niveau 5",Math.floor((profile.xp||0)/100),5]
+  ];
+  list.innerHTML=items.map(a=>{
+    const pct=a[4]?Math.min(100,Math.round(Number(a[3])/Number(a[4])*100)):0;
+    return `<div class="bob-challenge"><div class="ico">${a[0]}</div><div><b>${a[1]}</b><small>${a[2]}</small></div><strong>${a[3]}${a[4]?"/"+a[4]:""}</strong></div>`
+  }).join("");
+}
+
+/* Make the old Doodle/Soccer choices open from the new hub. */
+$("bobChooseDoodle")?.addEventListener("click",()=>{
+  // The original Doodle script listens to the same overlay; trigger its existing
+  // start/open mechanism through the original button behavior if available.
+  choice.hidden=true;
+  const ov=$("doodleOverlay");
+  if(ov){
+    ov.classList.add("open");ov.setAttribute("aria-hidden","false");
+    document.body.style.overflow="hidden";
+    window.dispatchEvent(new Event("resize"));
+  }
+});
+$("bobChooseSoccer")?.addEventListener("click",()=>{
+  choice.hidden=true;
+  const ov=$("bobHeadSoccer");
+  if(ov){ov.hidden=false;document.body.style.overflow="hidden";}
+});
+
+/* When old games return to their choice menu, keep the new hub. */
+const oldShow=window.show;
+if(typeof oldShow==="function"){
+  // Do not replace it globally; the original game code remains authoritative.
+}
+refreshHub();
+})();
+</script>
+
+
+<script id="bob-arcade-doodle-bridge">
+(function(){
+  function sync(){
+    try{
+      const p=JSON.parse(localStorage.getItem("bobArcadeProfileV2")||"{}");
+      const filters={green:"none",white:"grayscale(1) brightness(1.15)",red:"hue-rotate(320deg) saturate(1.45)",blue:"hue-rotate(185deg) saturate(1.2)",purple:"hue-rotate(255deg) saturate(1.15)",gold:"sepia(1) saturate(1.7) hue-rotate(350deg)"};
+      window.BOB_ARCADE_FILTER=filters[p.skin||"green"]||"none";
+      window.BOB_ARCADE_DRAW_ACCESSORY=function(ctx,x,y,w,h){
+        const hat=p.hat||"none";ctx.save();ctx.fillStyle="#fff";ctx.strokeStyle="#000";ctx.lineWidth=2;
+        if(hat==="halo"){ctx.beginPath();ctx.ellipse(x+w/2,y+h*.07,w*.25,h*.06,0,0,Math.PI*2);ctx.stroke()}
+        if(hat==="cap"){ctx.fillStyle="#111";ctx.fillRect(x+w*.22,y+h*.08,w*.48,h*.08);ctx.fillRect(x+w*.54,y+h*.16,w*.25,h*.035)}
+        if(hat==="crown"){ctx.fillStyle="#d7ad35";ctx.beginPath();ctx.moveTo(x+w*.25,y+h*.13);ctx.lineTo(x+w*.3,y);ctx.lineTo(x+w*.43,y+h*.1);ctx.lineTo(x+w*.5,y);ctx.lineTo(x+w*.59,y+h*.1);ctx.lineTo(x+w*.72,y);ctx.lineTo(x+w*.77,y+h*.13);ctx.closePath();ctx.fill();ctx.stroke()}
+        ctx.restore();
+      };
+    }catch(e){}
+  }
+  sync();setInterval(sync,700);
 })();
 </script>
 
