@@ -4562,6 +4562,122 @@ window.openBOBArcade=function(){ showOnly(choice); refreshHub(); };
 })();
 </script>
 
+
+<style id="bob-arcade-final-fix-css">
+/* Correctif final ARCADE : les deux nouveaux jeux sont toujours cliquables */
+#bobFlappy,#bobRunner,#bobArcadeGarage,#bobArcadeChallenges{
+  position:fixed!important;
+  inset:0!important;
+  z-index:100000!important;
+}
+#bobFlappy[hidden],#bobRunner[hidden],#bobArcadeGarage[hidden],#bobArcadeChallenges[hidden]{
+  display:none!important;
+}
+#bobFlappy .bob-extra-game,#bobRunner .bob-extra-game{
+  pointer-events:auto!important;
+}
+#bobFlappy button,#bobRunner button,#bobGameChoice button{
+  pointer-events:auto!important;
+  position:relative;
+  z-index:100002;
+  touch-action:manipulation;
+}
+#bobFlappyCanvas,#bobRunnerCanvas{
+  pointer-events:auto!important;
+  touch-action:none!important;
+}
+</style>
+
+
+<script id="bob-arcade-final-fix-js">
+(function(){
+  "use strict";
+
+  const $=id=>document.getElementById(id);
+  const choice=$("bobGameChoice"), flappy=$("bobFlappy"), runner=$("bobRunner");
+
+  function openGame(el){
+    if(!el)return;
+    [choice,flappy,runner,$("bobArcadeGarage"),$("bobArcadeChallenges")].forEach(x=>{
+      if(x) x.hidden=(x!==el);
+    });
+    el.removeAttribute("hidden");
+    el.style.display="flex";
+    document.body.style.overflow="hidden";
+
+    // Important: the canvases were initialized while their overlays were hidden.
+    // Recalculate their real dimensions after they become visible.
+    requestAnimationFrame(()=>{
+      const canvas=el.querySelector("canvas");
+      if(canvas){
+        const r=canvas.getBoundingClientRect();
+        if(r.width>0 && r.height>0){
+          canvas.dispatchEvent(new Event("bob-visible"));
+          window.dispatchEvent(new Event("resize"));
+        }
+      }
+    });
+  }
+
+  function closeGame(){
+    [flappy,runner].forEach(x=>{
+      if(x){x.hidden=true;x.style.display="none";}
+    });
+    if(choice){
+      choice.hidden=false;
+      choice.style.display="flex";
+    }
+  }
+
+  // Use direct handlers as a fallback instead of depending on event bubbling.
+  const fb=$("bobChooseFlappy");
+  const rb=$("bobChooseRunner");
+  if(fb) fb.onclick=function(e){e.preventDefault();e.stopPropagation();openGame(flappy);};
+  if(rb) rb.onclick=function(e){e.preventDefault();e.stopPropagation();openGame(runner);};
+
+  const fback=$("bobFlappyBack"), rback=$("bobRunnerBack");
+  if(fback) fback.onclick=function(e){e.preventDefault();e.stopPropagation();closeGame();};
+  if(rback) rback.onclick=function(e){e.preventDefault();e.stopPropagation();closeGame();};
+
+  // The previous game code creates the play buttons, but these handlers make
+  // sure a tap always reaches them.
+  ["bobFlappyStart","bobFlappyMode","bobRunnerStart","bobRunnerMode"].forEach(id=>{
+    const b=$(id);
+    if(b){
+      b.style.pointerEvents="auto";
+      b.style.touchAction="manipulation";
+    }
+  });
+
+  // If the canvas was opened on a mobile browser, resize it once more after
+  // layout has settled.
+  [flappy,runner].forEach(el=>{
+    if(!el)return;
+    new MutationObserver(()=>{
+      if(!el.hidden){
+        requestAnimationFrame(()=>{
+          const c=el.querySelector("canvas");
+          if(c && c.getBoundingClientRect().width>0){
+            c.dispatchEvent(new Event("bob-visible"));
+          }
+        });
+      }
+    }).observe(el,{attributes:true,attributeFilter:["hidden","style"]});
+  });
+
+  // Prevent an old overlay click handler from swallowing the new game cards.
+  if(choice){
+    choice.addEventListener("pointerup",function(e){
+      const b=e.target.closest("#bobChooseFlappy,#bobChooseRunner");
+      if(!b)return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      openGame(b.id==="bobChooseFlappy"?flappy:runner);
+    },true);
+  }
+})();
+</script>
+
 </body></html>
 <style id="bob-eraser-logo">
 .bob{display:grid;place-items:center;overflow:hidden}
