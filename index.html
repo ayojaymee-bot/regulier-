@@ -4681,8 +4681,8 @@ window.openBOBArcade=function(){ showOnly(choice); refreshHub(); };
     window.EJS_gameName="Pokemon - Version Argent SoulSilver (France)";
     window.EJS_biosUrl="";
     window.EJS_gameUrl=ROM_URL;
-    window.EJS_core="desmume";
-    window.EJS_pathtodata="https://cdn.emulatorjs.org/stable/data/";
+    window.EJS_core="desmume2015";
+    window.EJS_pathtodata="https://cdn.emulatorjs.org/4.2.3/data/";
     window.EJS_startOnLoaded=true;
     window.EJS_askBeforeExit=false;
     window.EJS_browserMode="mobile";
@@ -4691,6 +4691,7 @@ window.openBOBArcade=function(){ showOnly(choice); refreshHub(); };
     window.EJS_noAutoFocus=true;
     window.EJS_disableDatabases=true;
 
+    window.EJS_onGameStart=function(){ try{setLoading(false); if(statusEl)statusEl.textContent="NINTENDO DS";}catch(e){}; };
     window.EJS_ready=function(){
       if(token!==bootToken)return;
       setLoading(true,"Lancement de Pokémon SoulSilver…");
@@ -4708,7 +4709,7 @@ window.openBOBArcade=function(){ showOnly(choice); refreshHub(); };
 
     loader=document.createElement("script");
     loader.id="bob-emulatorjs-ds-loader";
-    loader.src="https://cdn.emulatorjs.org/stable/data/loader.js?v=nds-supabase-2";
+    loader.src="https://cdn.emulatorjs.org/4.2.3/data/loader.js?v=nds-supabase-2";
     loader.async=false;
     loader.onerror=function(){
       if(token!==bootToken)return;
