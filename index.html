@@ -4639,94 +4639,68 @@ window.openBOBArcade=function(){ showOnly(choice); refreshHub(); };
   const $=id=>document.getElementById(id);
   const ds=$("bobNintendoDS"), mount=$("bobNintendoDSEmulator");
   if(!ds||!mount)return;
-  let loader=null, loading=false, bootLock=false, bootToken=0, timeoutId=null;
-
-  const ROM_URL="https://ijvzeakiljqpejvilgye.supabase.co/storage/v1/object/public/games/Pokemon%20-%20Version%20Argent%20SoulSilver%20(France).nds";
+  const ROM_URL="https://ijvzeakiljqpejvilgye.supabase.co/storage/v1/object/public/games/Pokemon%20-%20Version%20Argent%20SoulSilver%20(France).nds?download=1";
+  let frame=null, frameURL=null, bootLock=false, bootToken=0;
 
   function getOverlay(){return $("bobNintendoDSLoading");}
   function setLoading(show,text){
-    const el=getOverlay();
-    if(!el)return;
+    const el=getOverlay(); if(!el)return;
     el.hidden=!show;
-    const span=el.querySelector("span");
-    if(span&&text)span.textContent=text;
+    const span=el.querySelector("span"); if(span&&text)span.textContent=text;
   }
   function resetMount(){
-    mount.innerHTML='<div id="nintendo-ds-ejs"></div><div class="bob-ds-loading" id="bobNintendoDSLoading"><div class="bob-ds-loading-mark">DS</div><b>CHARGEMENT DE POKÉMON</b><span>Préparation de l\'émulateur Nintendo DS…</span></div>';
+    mount.innerHTML='<iframe id="bobNintendoDSFrame" title="Nintendo DS" allow="autoplay; fullscreen; gamepad" style="display:block;width:100%;height:100%;border:0;background:#000;touch-action:none;overscroll-behavior:none"></iframe>'+
+      '<div class="bob-ds-loading" id="bobNintendoDSLoading"><div class="bob-ds-loading-mark">DS</div><b>CHARGEMENT DE POKÉMON</b><span>Préparation de l\'émulateur Nintendo DS…</span></div>';
+    frame=$("bobNintendoDSFrame");
   }
   function stopEmulator(){
-    bootToken++;
-    loading=false; bootLock=false;
-    if(timeoutId){clearTimeout(timeoutId);timeoutId=null;}
-    try{if(typeof window.EJS_terminate==='function')window.EJS_terminate();}catch(e){}
-    try{if(window.EJS&&typeof window.EJS.terminate==='function')window.EJS.terminate();}catch(e){}
-    try{if(window.EJS_emulator&&typeof window.EJS_emulator.exit==='function')window.EJS_emulator.exit();}catch(e){}
-    if(loader&&loader.parentNode)loader.parentNode.removeChild(loader);
-    loader=null;
+    bootToken++; bootLock=false;
+    if(frame){try{frame.src="about:blank";}catch(e){} frame.remove(); frame=null;}
+    if(frameURL){try{URL.revokeObjectURL(frameURL);}catch(e){} frameURL=null;}
     resetMount();
   }
 
+  function buildFrameHTML(token){
+    const rom=ROM_URL.replace(/&/g,"&amp;").replace(/"/g,"&quot;");
+    return '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}#game{width:100%;height:100%;touch-action:none;overscroll-behavior:none}</style></head><body><div id="game"></div><script>'+
+      'window.EJS_player="#game";window.EJS_core="melonds";window.EJS_gameUrl="'+rom+'";window.EJS_gameName="Pokemon - Version Argent SoulSilver (France)";window.EJS_pathtodata="https://cdn.emulatorjs.org/4.2.3/data/";window.EJS_startOnLoaded=true;window.EJS_askBeforeExit=false;window.EJS_browserMode="mobile";window.EJS_controlScheme="nds";window.EJS_backgroundColor="#000";window.EJS_disableDatabases=true;window.EJS_onGameStart=function(){parent.postMessage({type:"BOB_DS_STARTED",token:'+token+'},"*");};window.addEventListener("touchmove",function(e){e.preventDefault()},{passive:false});' +
+      '</scr'+'ipt><script src="https://cdn.emulatorjs.org/4.2.3/data/loader.js"></scr'+'ipt></body></html>';
+  }
+
   window.launchBOBNintendoDS=function(){
-    if(loading||bootLock)return;
+    if(bootLock)return;
+    bootLock=true;
     const token=++bootToken;
-    loading=true; bootLock=true;
     const nameEl=$("bobNintendoDSName"), statusEl=$("bobNintendoDSStatus");
     if(nameEl)nameEl.textContent="POKÉMON VERSION ARGENT SOULSILVER";
     if(statusEl)statusEl.textContent="CHARGEMENT…";
     setLoading(true,"Chargement de Pokémon SoulSilver…");
-
-    // EmulatorJS can load a remote ROM directly. We deliberately do NOT fetch
-    // the 128 MB ROM into a Blob first: this is much more reliable on iPhone/Safari.
-    window.EJS_player="#nintendo-ds-ejs";
-    window.EJS_gameName="Pokemon - Version Argent SoulSilver (France)";
-    window.EJS_biosUrl="";
-    window.EJS_gameUrl=ROM_URL;
-    window.EJS_core="desmume2015";
-    window.EJS_pathtodata="https://cdn.emulatorjs.org/4.2.3/data/";
-    window.EJS_startOnLoaded=true;
-    window.EJS_askBeforeExit=false;
-    window.EJS_browserMode="mobile";
-    window.EJS_controlScheme="nds";
-    window.EJS_backgroundColor="#000";
-    window.EJS_noAutoFocus=true;
-    window.EJS_disableDatabases=true;
-
-    window.EJS_onGameStart=function(){ try{setLoading(false); if(statusEl)statusEl.textContent="NINTENDO DS";}catch(e){}; };
-    window.EJS_ready=function(){
+    if(frameURL){try{URL.revokeObjectURL(frameURL);}catch(e){} frameURL=null;}
+    resetMount();
+    frame=$("bobNintendoDSFrame");
+    frame.addEventListener("load",function(){
       if(token!==bootToken)return;
       setLoading(true,"Lancement de Pokémon SoulSilver…");
-      try{window.dispatchEvent(new Event("resize"));}catch(e){}
-    };
-    window.EJS_onGameStart=function(){
+    });
+    const html=buildFrameHTML(token);
+    frameURL=URL.createObjectURL(new Blob([html],{type:"text/html;charset=utf-8"}));
+    frame.src=frameURL;
+    setTimeout(function(){
       if(token!==bootToken)return;
-      loading=false;bootLock=false;
-      if(timeoutId){clearTimeout(timeoutId);timeoutId=null;}
-      if(statusEl)statusEl.textContent="EN JEU";
-      setLoading(false);
-      try{ds.setAttribute("data-running","1");}catch(e){}
-      setTimeout(()=>window.dispatchEvent(new Event("resize")),100);
-    };
-
-    loader=document.createElement("script");
-    loader.id="bob-emulatorjs-ds-loader";
-    loader.src="https://cdn.emulatorjs.org/4.2.3/data/loader.js?v=nds-supabase-2";
-    loader.async=false;
-    loader.onerror=function(){
-      if(token!==bootToken)return;
-      loading=false;bootLock=false;
-      if(statusEl)statusEl.textContent="ERREUR";
-      setLoading(true,"Impossible de charger l’émulateur. Vérifie la connexion internet.");
-    };
-    document.body.appendChild(loader);
-
-    // Never leave the user on an infinite loading screen.
-    timeoutId=setTimeout(function(){
-      if(token!==bootToken||!loading)return;
-      loading=false;bootLock=false;
-      if(statusEl)statusEl.textContent="ERREUR";
-      setLoading(true,"Le chargement est trop long. Ferme puis relance la Nintendo DS.");
-    },90000);
+      // If EmulatorJS reports an error in its iframe, do not leave the old custom loader forever.
+      setLoading(true,"Lancement de l’émulateur…");
+    },5000);
   };
+
+  window.addEventListener("message",function(e){
+    const d=e&&e.data;if(!d||d.type!=="BOB_DS_STARTED")return;
+    if(d.token!==bootToken)return;
+    bootLock=false;
+    const statusEl=$("bobNintendoDSStatus");
+    if(statusEl)statusEl.textContent="EN JEU";
+    setLoading(false);
+    try{ds.setAttribute("data-running","1");}catch(e){}
+  });
 
   window.stopBOBNintendoDS=function(){
     try{stopEmulator();}catch(e){}
@@ -4736,6 +4710,8 @@ window.openBOBArcade=function(){ showOnly(choice); refreshHub(); };
     if(statusEl)statusEl.textContent="PRÉINSTALLÉ";
     setLoading(true,"Préparation de l’émulateur Nintendo DS…");
   };
+
+  resetMount();
 })();
 </script>
 
