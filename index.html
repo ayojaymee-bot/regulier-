@@ -137,6 +137,10 @@ function add(type){
  data.unshift({id:Date.now(),type,name,amount,date:new Date().toLocaleDateString('fr-FR')});
  document.getElementById(p+'Name').value=''; document.getElementById(p+'Amount').value='';
  save();
+ const stage=document.getElementById('stage');
+ stage.classList.remove('bounce'); void stage.offsetWidth; stage.classList.add('bounce');
+ setTimeout(()=>stage.classList.remove('bounce'),700);
+ if(type==='income') coins();
 }
 function removeItem(id){data=data.filter(x=>x.id!==id);save()}
 function clearAll(){if(data.length&&confirm('Effacer tout l’historique ?')){data=[];save()}}
@@ -153,7 +157,7 @@ function coins(){
     document.getElementById('stage').appendChild(c);
     setTimeout(()=>c.remove(),1800);
   }
-}}
+}
 function render(){
  let inc=data.filter(x=>x.type==='income').reduce((a,x)=>a+x.amount,0);
  let exp=data.filter(x=>x.type==='expense').reduce((a,x)=>a+x.amount,0);
