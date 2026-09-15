@@ -2357,33 +2357,6 @@ input:focus,select:focus,textarea:focus{border-color:rgba(255,255,255,.55);backg
 
 
 
-
-<style id="bob-iphone-redesign">
-/* BOB iPhone redesign — presentation layer only; existing IDs and logic remain intact. */
-:root{--ink:#f6f7f2;--muted:#9da39b;--night:#0c0e0d;--panel:#151917;--panel-2:#1b201d;--line:rgba(246,247,242,.13);--acid:#d9ff56;--coral:#ff735c;--safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px)}
-html{background:var(--night);color-scheme:dark;scroll-behavior:smooth}
-body{background:radial-gradient(ellipse at 70% -10%,#263329 0%,transparent 48%),var(--night);color:var(--ink);font-family:"Avenir Next","Helvetica Neue",system-ui,sans-serif;letter-spacing:-.01em;overflow-x:hidden}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.07;background-image:radial-gradient(#fff .6px,transparent .6px);background-size:5px 5px;mix-blend-mode:soft-light;z-index:0}
-button,input{font-family:inherit}button{min-height:48px}button:focus-visible,input:focus-visible{outline:3px solid var(--acid);outline-offset:3px}
-.screen{position:relative;z-index:1;width:100%;max-width:760px;min-height:100svh;margin:auto;padding:calc(24px + var(--safe-top)) 18px calc(112px + var(--safe-bottom));}
-.home{align-items:stretch;padding-top:calc(26px + var(--safe-top));animation:bob-rise .55s ease both}
-.home-title{font-size:clamp(3.8rem,19vw,7rem)!important;line-height:.78!important;letter-spacing:-.1em!important;font-weight:900!important;margin:0 0 12px!important;text-align:left!important;color:var(--acid)!important;text-shadow:4px 5px 0 rgba(255,115,92,.9)}
-.home-sub{font-size:1rem!important;color:var(--muted)!important;margin:0 0 24px!important;text-align:left!important}
-.home-bob{align-self:center;width:min(66vw,280px)!important;height:min(66vw,280px)!important;min-width:210px!important;min-height:210px!important;margin:24px auto 34px!important;border-radius:50%;background:linear-gradient(135deg,#29352b,#111512)!important;box-shadow:inset -18px -18px 0 rgba(0,0,0,.18),0 22px 55px rgba(0,0,0,.35);transition:transform .25s ease,filter .25s ease}
-.home-bob:active{transform:scale(.96) rotate(-2deg);filter:saturate(1.3)}
-.home-playlists{display:grid;gap:12px;padding-bottom:16px}
-.playlist-card{background:linear-gradient(135deg,rgba(255,255,255,.09),rgba(255,255,255,.035))!important;border:1px solid var(--line)!important;border-radius:22px!important;box-shadow:0 10px 30px rgba(0,0,0,.18)!important;min-height:82px;padding:7px!important;backdrop-filter:blur(14px)}
-.playlist-card-main{min-height:68px!important;border-radius:17px!important;padding:12px 14px!important}.playlist-icon{width:48px!important;height:48px!important;border-radius:14px!important;background:var(--acid)!important;color:#111!important}.playlist-name{font-weight:800!important}.playlist-meta{color:var(--muted)!important}.playlist-actions button{min-width:48px!important;min-height:48px!important;border-radius:14px!important}
-.app{padding-top:calc(14px + var(--safe-top))}
-.top{height:56px!important;margin:0 0 12px!important;display:flex;align-items:center!important;justify-content:space-between!important}.top-right{gap:7px!important}.icon,.bob{width:48px!important;height:48px!important;min-height:48px!important;border-radius:16px!important;background:var(--panel-2)!important;border:1px solid var(--line)!important;color:var(--ink)!important}.top .icon:first-child{font-size:30px!important}.project{display:block!important}.cover-upload-wrap{width:100%!important;aspect-ratio:1.12!important;height:auto!important;border-radius:28px!important;overflow:hidden!important;background:#171d18!important;box-shadow:0 22px 55px rgba(0,0,0,.28)!important}.cover{width:100%!important;height:100%!important;object-fit:cover!important}.title-row{display:flex!important;align-items:end!important;gap:12px!important;margin:22px 2px 18px!important}.title-row>div{min-width:0}.title-row h1{font-size:clamp(2rem,10vw,3.2rem)!important;line-height:.95!important;letter-spacing:-.07em!important;margin:0 0 8px!important}.sub{color:var(--muted)!important;font-size:.9rem!important}.play-main{flex:0 0 58px!important;width:58px!important;height:58px!important;min-height:58px!important;border-radius:20px!important;background:var(--acid)!important;color:#101310!important;font-size:1.35rem!important;box-shadow:0 8px 22px rgba(217,255,86,.18)}
-.playlist-tools{display:flex!important;gap:10px!important;margin:0 0 14px!important}.add{flex:1!important;min-height:54px!important;border-radius:17px!important;background:var(--coral)!important;color:#1b100d!important;font-weight:800!important}.shuffle{width:54px!important;min-height:54px!important;border-radius:17px!important;background:var(--panel-2)!important;border:1px solid var(--line)!important}.track-search{height:54px!important;border-radius:17px!important;background:var(--panel)!important;border:1px solid var(--line)!important;margin-bottom:14px!important;padding:0 15px!important}.track-search input{font-size:1rem!important}.tracks{display:grid!important;gap:8px!important}.track{min-height:70px!important;border-radius:18px!important;background:rgba(255,255,255,.055)!important;border:1px solid transparent!important;padding:10px 12px!important}.track:active{background:rgba(217,255,86,.12)!important;border-color:rgba(217,255,86,.35)!important}
-.player{position:fixed!important;z-index:20!important;left:12px!important;right:12px!important;bottom:calc(76px + var(--safe-bottom))!important;width:auto!important;max-width:none!important;border-radius:24px!important;background:rgba(25,30,27,.94)!important;border:1px solid rgba(217,255,86,.28)!important;box-shadow:0 18px 50px rgba(0,0,0,.45)!important;backdrop-filter:blur(22px)!important;padding:10px 12px!important}.player-top{min-height:48px!important}.player-btn{width:48px!important;height:48px!important;min-height:48px!important;border-radius:15px!important}.player-play{background:var(--acid)!important;color:#111!important}.progress{height:5px!important;border-radius:99px!important;background:#394139!important}.progress-fill{background:var(--acid)!important}.player-expanded-controls{padding-top:10px!important}
-.settings{background:rgba(7,9,8,.82)!important}.sheet{border-radius:28px 28px 0 0!important;background:#1a1f1c!important;padding:22px 18px calc(26px + var(--safe-bottom))!important}.field input{min-height:52px!important;border-radius:15px!important;background:#0e120f!important;border:1px solid var(--line)!important}.actions button,.primary{min-height:54px!important;border-radius:17px!important}
-#bobMobileNav{position:fixed;z-index:50;left:10px;right:10px;bottom:calc(10px + var(--safe-bottom));height:62px;padding:6px;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;border:1px solid rgba(255,255,255,.13);border-radius:22px;background:rgba(20,24,21,.93);box-shadow:0 16px 40px rgba(0,0,0,.45);backdrop-filter:blur(22px)}#bobMobileNav button{min-height:48px;border-radius:16px;background:transparent;color:var(--muted);font-size:.68rem;font-weight:800;letter-spacing:.04em}#bobMobileNav button b{display:block;font-size:1.25rem;line-height:1.1;color:var(--ink)}#bobMobileNav button:active,#bobMobileNav button.is-active{background:var(--acid);color:#111}#bobMobileNav button:active b,#bobMobileNav button.is-active b{color:#111}
-@keyframes bob-rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-@media (min-width:821px){#bobMobileNav{display:none}.screen{padding-bottom:70px}.player{bottom:20px!important;left:50%!important;right:auto!important;transform:translateX(-50%);width:min(720px,calc(100% - 40px))!important}}
-@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
-</style>
 </head><body>
 <div id="bootSplash" aria-hidden="true"><img id="bootBob" alt="BOB"><div class="boot-text">BOB</div></div>
 <section class="screen home" id="homeScreen">
@@ -4845,42 +4818,75 @@ window.openBOBArcade=function(){ showOnly(choice); refreshHub(); };
     resetMount();
   }
 
-  function buildFrameHTML(token){
+  function buildFrameHTML(token, core){
     const rom=ROM_URL.replace(/&/g,"&amp;").replace(/"/g,"&quot;");
-    return '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}#game{width:100%;height:100%;touch-action:none;overscroll-behavior:none}</style></head><body><div id="game"></div><script>'+
-      'window.EJS_player="#game";window.EJS_core="melonds";window.EJS_gameUrl="'+rom+'";window.EJS_gameName="Pokemon - Version Argent SoulSilver (France)";window.EJS_pathtodata="https://cdn.emulatorjs.org/4.2.3/data/";window.EJS_startOnLoaded=true;window.EJS_askBeforeExit=false;window.EJS_browserMode="mobile";window.EJS_controlScheme="nds";window.EJS_backgroundColor="#000";window.EJS_disableDatabases=true;window.EJS_onGameStart=function(){parent.postMessage({type:"BOB_DS_STARTED",token:'+token+'},"*");};window.addEventListener("touchmove",function(e){e.preventDefault()},{passive:false});' +
-      '</scr'+'ipt><script src="https://cdn.emulatorjs.org/4.2.3/data/loader.js"></scr'+'ipt>
-</body></html>';
+    const coreSafe=String(core).replace(/[^a-z0-9]/gi,"");
+    return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}#game{width:100%;height:100%;min-height:100%;touch-action:none;overscroll-behavior:none}</style></head><body><div id="game"></div><script>'+
+      'window.EJS_player="#game";window.EJS_core="'+coreSafe+'";window.EJS_gameUrl="'+rom+'";window.EJS_gameName="Pokemon - Version Argent SoulSilver (France)";window.EJS_pathtodata="https://cdn.emulatorjs.org/stable/data/";window.EJS_startOnLoaded=true;window.EJS_askBeforeExit=false;window.EJS_browserMode="mobile";window.EJS_controlScheme="nds";window.EJS_backgroundColor="#000";window.EJS_threads=false;window.EJS_disableDatabases=true;window.EJS_disableAutoLang=true;window.EJS_language="fr-FR";window.EJS_gameID=24680;window.EJS_forceLegacyCores=!function(){try{var c=document.createElement("canvas");return !!(c.getContext&&c.getContext("webgl2"));}catch(e){return false;}}();window.EJS_onGameStart=function(){parent.postMessage({type:"BOB_DS_STARTED",token:'+token+'},"*");};window.EJS_ready=function(){parent.postMessage({type:"BOB_DS_READY",token:'+token+',core:"'+coreSafe+'"},"*");};window.addEventListener("error",function(e){try{parent.postMessage({type:"BOB_DS_ERROR",token:'+token+',message:String(e.message||"Erreur de chargement")},"*");}catch(_){}});window.addEventListener("unhandledrejection",function(e){try{parent.postMessage({type:"BOB_DS_ERROR",token:'+token+',message:String((e&&e.reason)||"Erreur de chargement")},"*");}catch(_){}});window.addEventListener("touchmove",function(e){e.preventDefault()},{passive:false});' +
+      '</scr'+'ipt><script src="https://cdn.emulatorjs.org/stable/data/loader.js"></scr'+'ipt></body></html>';
+  }
+
+  let dsCoreIndex=0;
+  let dsCoreTimer=null;
+  const DS_CORES=["melonds","desmume2015","desmume"];
+  function supportsWebAssembly(){return typeof WebAssembly!=="undefined";}
+  function bootDSCore(token){
+    if(token!==bootToken)return;
+    if(dsCoreTimer){clearTimeout(dsCoreTimer);dsCoreTimer=null;}
+    if(!supportsWebAssembly()){
+      setLoading(true,"Ce téléphone ne prend pas en charge WebAssembly.");
+      const st=$("bobNintendoDSStatus");if(st)st.textContent="NAVIGATEUR INCOMPATIBLE";
+      bootLock=false;return;
+    }
+    const core=DS_CORES[dsCoreIndex]||DS_CORES[0];
+    if(dsCoreIndex>0)setLoading(true,"Compatibilité renforcée : essai d’un autre moteur…");
+    resetMount();
+    frame=$("bobNintendoDSFrame");
+    frame.setAttribute("allow","autoplay; fullscreen; gamepad; microphone");
+    frame.setAttribute("loading","eager");
+    frame.addEventListener("load",function(){if(token===bootToken)setLoading(true,"Lancement de Pokémon SoulSilver…");},{once:true});
+    const html=buildFrameHTML(token,core);
+    frameURL=URL.createObjectURL(new Blob([html],{type:"text/html;charset=utf-8"}));
+    frame.src=frameURL;
+    dsCoreTimer=setTimeout(function(){
+      if(token!==bootToken)return;
+      if(dsCoreIndex<DS_CORES.length-1){
+        dsCoreIndex++;
+        bootDSCore(token);
+      }else{
+        bootLock=false;
+        const st=$("bobNintendoDSStatus");if(st)st.textContent="ÉCHEC DU CHARGEMENT";
+        setLoading(true,"Le téléphone bloque probablement l’émulation WebAssembly. Essaie Chrome/Safari à jour.");
+      }
+    },18000);
   }
 
   window.launchBOBNintendoDS=function(){
     if(bootLock)return;
     bootLock=true;
+    dsCoreIndex=0;
     const token=++bootToken;
     const nameEl=$("bobNintendoDSName"), statusEl=$("bobNintendoDSStatus");
     if(nameEl)nameEl.textContent="POKÉMON VERSION ARGENT SOULSILVER";
     if(statusEl)statusEl.textContent="CHARGEMENT…";
     setLoading(true,"Chargement de Pokémon SoulSilver…");
     if(frameURL){try{URL.revokeObjectURL(frameURL);}catch(e){} frameURL=null;}
-    resetMount();
-    frame=$("bobNintendoDSFrame");
-    frame.addEventListener("load",function(){
-      if(token!==bootToken)return;
-      setLoading(true,"Lancement de Pokémon SoulSilver…");
-    });
-    const html=buildFrameHTML(token);
-    frameURL=URL.createObjectURL(new Blob([html],{type:"text/html;charset=utf-8"}));
-    frame.src=frameURL;
-    setTimeout(function(){
-      if(token!==bootToken)return;
-      // If EmulatorJS reports an error in its iframe, do not leave the old custom loader forever.
-      setLoading(true,"Lancement de l’émulateur…");
-    },5000);
+    bootDSCore(token);
   };
 
   window.addEventListener("message",function(e){
-    const d=e&&e.data;if(!d||d.type!=="BOB_DS_STARTED")return;
+    const d=e&&e.data;if(!d||!d.type)return;
     if(d.token!==bootToken)return;
+    if(d.type==="BOB_DS_READY"){
+      const st=$("bobNintendoDSStatus");if(st)st.textContent="PRÊT";
+      return;
+    }
+    if(d.type==="BOB_DS_ERROR"){
+      if(dsCoreIndex<DS_CORES.length-1){dsCoreIndex++;bootDSCore(bootToken);} 
+      return;
+    }
+    if(d.type!=="BOB_DS_STARTED")return;
+    if(dsCoreTimer){clearTimeout(dsCoreTimer);dsCoreTimer=null;}
     bootLock=false;
     const statusEl=$("bobNintendoDSStatus");
     if(statusEl)statusEl.textContent="EN JEU";
@@ -4965,27 +4971,6 @@ window.openBOBArcade=function(){ showOnly(choice); refreshHub(); };
   if(home){home.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();if(window.openBOBArcade)window.openBOBArcade();},true);}
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-})();
-</script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"8607d2a720d14b038279025b2b5a82e5","spa":2}' crossorigin="anonymous"></script>
-<nav id="bobMobileNav" aria-label="Navigation principale">
-  <button id="bobNavHome" type="button" aria-label="Accueil"><b>⌂</b>ACCUEIL</button>
-  <button id="bobNavPlay" type="button" aria-label="Lire la playlist"><b>▶</b>LIRE</button>
-  <button id="bobNavSearch" type="button" aria-label="Rechercher"><b>⌕</b>CHERCHER</button>
-  <button id="bobNavSettings" type="button" aria-label="Réglages"><b>⋯</b>PLUS</button>
-</nav>
-<script id="bob-iphone-redesign-js">
-(function(){
-  function init(){
-    const q=id=>document.getElementById(id), nav=q('bobMobileNav'); if(!nav)return;
-    const home=q('bobNavHome'),play=q('bobNavPlay'),search=q('bobNavSearch'),settings=q('bobNavSettings');
-    home&&home.addEventListener('click',()=>{const b=q('back');if(b)b.click();else window.scrollTo({top:0,behavior:'smooth'});});
-    play&&play.addEventListener('click',()=>{const b=q('playAll');if(b)b.click();});
-    search&&search.addEventListener('click',()=>{const i=q('trackSearch');if(i){i.focus();i.scrollIntoView({behavior:'smooth',block:'center'});}});
-    settings&&settings.addEventListener('click',()=>{const b=q('settings');if(b)b.click();});
-    const sync=()=>{const app=q('appScreen');nav.classList.toggle('app-active',!!app&&!app.hidden&&getComputedStyle(app).display!=='none');};
-    sync(); new MutationObserver(sync).observe(document.body,{attributes:true,subtree:true,attributeFilter:['hidden','style','class']});
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script><script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"8607d2a720d14b038279025b2b5a82e5","spa":2}' crossorigin="anonymous"></script>
 </body></html>
