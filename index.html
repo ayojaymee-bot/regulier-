@@ -3942,6 +3942,12 @@ hideBootSplash();
         <em>05</em>
       </button>
 
+      <button class="bob-game-card" id="bobChooseGameBoy" aria-label="Ouvrir Game Boy">
+        <span class="bob-game-icon">GB</span>
+        <span><b>GAME BOY</b><small>POKÉMON RED • PRÉINSTALLÉ</small></span>
+        <em>06</em>
+      </button>
+
     </div>
 
     <div class="bob-arcade-bottom">
@@ -3965,6 +3971,24 @@ hideBootSplash();
         <div class="bob-ds-loading-mark">DS</div>
         <b>CHARGEMENT DE POKÉMON</b>
         <span>Préparation de l'émulateur Nintendo DS…</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="bobGameBoy" class="bob-game-overlay" hidden aria-label="Émulateur Game Boy">
+  <div class="bob-extra-game bob-ds-shell">
+    <div class="bob-extra-top bob-ds-top">
+      <button class="bob-extra-back" id="bobGameBoyBack" aria-label="Retour">←</button>
+      <div><b>GAME BOY</b><small id="bobGameBoyName">POKÉMON RED</small></div>
+      <div class="bob-ds-status" id="bobGameBoyStatus">PRÉINSTALLÉ</div>
+    </div>
+    <div id="bobGameBoyEmulator" class="bob-ds-emulator">
+      <div id="gameboy-ejs"></div>
+      <div class="bob-ds-loading" id="bobGameBoyLoading">
+        <div class="bob-ds-loading-mark">GB</div>
+        <b>CHARGEMENT DE POKÉMON</b>
+        <span>Préparation de l'émulateur Game Boy…</span>
       </div>
     </div>
   </div>
@@ -4791,6 +4815,39 @@ window.openBOBArcade=function(){ showOnly(choice); refreshHub(); };
 
 
 
+
+<script id="bob-gameboy-js">
+(function(){
+  "use strict";
+  const $=id=>document.getElementById(id);
+  const gb=$("bobGameBoy"), mount=$("bobGameBoyEmulator");
+  if(!gb||!mount)return;
+  const ROM_URL="https://ijvzeakiljqpejvilgye.supabase.co/storage/v1/object/public/games/Pokemon%20Red.gb";
+  let frame=null, frameURL=null, bootLock=false, bootToken=0;
+  const CORES=["gambatte","mgba"];
+  function loading(show,text){const e=$("bobGameBoyLoading");if(!e)return;e.hidden=!show;const sp=e.querySelector("span");if(sp&&text)sp.textContent=text;}
+  function reset(){mount.innerHTML='<iframe id="bobGameBoyFrame" title="Game Boy" allow="autoplay; fullscreen; gamepad" style="display:block;width:100%;height:100%;border:0;background:#000;touch-action:none;overscroll-behavior:none"></iframe><div class="bob-ds-loading" id="bobGameBoyLoading"><div class="bob-ds-loading-mark">GB</div><b>CHARGEMENT DE POKÉMON</b><span>Préparation de l'émulateur Game Boy…</span></div>';frame=$("bobGameBoyFrame");}
+  function stop(){bootToken++;bootLock=false;if(frame){try{frame.src="about:blank";}catch(e){}frame.remove();frame=null;}if(frameURL){try{URL.revokeObjectURL(frameURL);}catch(e){}frameURL=null;}reset();}
+  function build(token,core){
+    const rom=ROM_URL.replace(/&/g,"&amp;").replace(/"/g,"&quot;");
+    return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}#game{width:100%;height:100%;min-height:100%;touch-action:none;overscroll-behavior:none}</style></head><body><div id="game"></div><script>'+
+      'window.EJS_player="#game";window.EJS_core="'+core+'";window.EJS_gameUrl="'+rom+'";window.EJS_gameName="Pokemon Red";window.EJS_pathtodata="https://cdn.emulatorjs.org/stable/data/";window.EJS_startOnLoaded=true;window.EJS_askBeforeExit=false;window.EJS_browserMode="mobile";window.EJS_controlScheme="gb";window.EJS_backgroundColor="#000";window.EJS_threads=false;window.EJS_disableDatabases=true;window.EJS_disableAutoLang=true;window.EJS_language="fr-FR";window.EJS_gameID=24681;window.EJS_forceLegacyCores=true;window.EJS_onGameStart=function(){parent.postMessage({type:"BOB_GB_STARTED",token:'+token+'},"*");};window.EJS_ready=function(){parent.postMessage({type:"BOB_GB_READY",token:'+token+',core:"'+core+'"},"*");};window.addEventListener("error",function(e){try{parent.postMessage({type:"BOB_GB_ERROR",token:'+token+',message:String(e.message||"Erreur de chargement")},"*")}catch(_){}});window.addEventListener("unhandledrejection",function(e){try{parent.postMessage({type:"BOB_GB_ERROR",token:'+token+',message:String((e&&e.reason)||"Erreur de chargement")},"*")}catch(_){}});window.addEventListener("touchmove",function(e){e.preventDefault()},{passive:false});</scr'+'ipt><script src="https://cdn.emulatorjs.org/stable/data/loader.js"></scr'+'ipt></body></html>';
+  }
+  let idx=0,timer=null;
+  function boot(token){
+    if(token!==bootToken)return;if(timer)clearTimeout(timer);
+    reset();frame=$("bobGameBoyFrame");loading(true,idx?"Compatibilité renforcée : essai d’un autre moteur…":"Chargement de Pokémon Red…");
+    frame.setAttribute("allow","autoplay; fullscreen; gamepad");frame.setAttribute("loading","eager");
+    frameURL=URL.createObjectURL(new Blob([build(token,CORES[idx])],{type:"text/html;charset=utf-8"}));frame.src=frameURL;
+    timer=setTimeout(function(){if(token!==bootToken)return;if(idx<CORES.length-1){idx++;boot(token);}else{bootLock=false;const st=$("bobGameBoyStatus");if(st)st.textContent="ÉCHEC DU CHARGEMENT";loading(true,"Le navigateur bloque probablement l’émulation. Essaie Safari/Chrome à jour.");}},12000);
+  }
+  window.launchBOBGameBoy=function(){if(bootLock)return;bootLock=true;idx=0;const token=++bootToken;const st=$("bobGameBoyStatus");if(st)st.textContent="CHARGEMENT…";boot(token);};
+  window.stopBOBGameBoy=function(){stop();const st=$("bobGameBoyStatus");if(st)st.textContent="PRÉINSTALLÉ";loading(true,"Préparation de l’émulateur Game Boy…");};
+  window.addEventListener("message",function(e){const d=e&&e.data;if(!d||d.token!==bootToken)return;if(d.type==="BOB_GB_READY"){const st=$("bobGameBoyStatus");if(st)st.textContent="PRÊT";}if(d.type==="BOB_GB_ERROR"){if(idx<CORES.length-1){idx++;boot(bootToken);}}if(d.type==="BOB_GB_STARTED"){if(timer)clearTimeout(timer);bootLock=false;const st=$("bobGameBoyStatus");if(st)st.textContent="EN JEU";loading(false);}});
+  reset();
+})();
+</script>
+
 <script id="bob-nintendo-ds-js">
 (function(){
   "use strict";
@@ -4911,37 +4968,40 @@ window.openBOBArcade=function(){ showOnly(choice); refreshHub(); };
 (function(){
   "use strict";
   const $=id=>document.getElementById(id);
-  const choice=$("bobGameChoice"), flappy=$("bobFlappy"), runner=$("bobRunner"), ds=$("bobNintendoDS");
+  const choice=$("bobGameChoice"), flappy=$("bobFlappy"), runner=$("bobRunner"), ds=$("bobNintendoDS"), gb=$("bobGameBoy");
 
   function openGame(el){
     if(!el)return;
-    [choice,flappy,runner,ds,$("bobArcadeGarage"),$("bobArcadeChallenges")].forEach(x=>{if(x)x.hidden=(x!==el);});
+    [choice,flappy,runner,ds,gb,$("bobArcadeGarage"),$("bobArcadeChallenges")].forEach(x=>{if(x)x.hidden=(x!==el);});
     el.hidden=false;el.style.display='flex';
     document.body.style.overflow='hidden';document.documentElement.style.overscrollBehavior='none';
     requestAnimationFrame(()=>{window.dispatchEvent(new Event('resize'));});
   }
   function closeGame(){
     if(typeof window.stopBOBNintendoDS==='function')try{window.stopBOBNintendoDS();}catch(e){}
-    [flappy,runner,ds].forEach(x=>{if(x){x.hidden=true;x.style.display='none';}});
+    [flappy,runner,ds,gb].forEach(x=>{if(x){x.hidden=true;x.style.display='none';}});
     if(choice){choice.hidden=false;choice.style.display='flex';}
     document.body.style.overflow='';document.documentElement.style.overscrollBehavior='';window.scrollTo(0,0);
   }
+  function launchGB(e){if(e){e.preventDefault();e.stopImmediatePropagation();}openGame(gb);requestAnimationFrame(()=>{if(typeof window.launchBOBGameBoy==="function")window.launchBOBGameBoy();});}
   function launchDS(e){
     if(e){e.preventDefault();e.stopImmediatePropagation();}
     openGame(ds);
     requestAnimationFrame(()=>{if(typeof window.launchBOBNintendoDS==='function')window.launchBOBNintendoDS();});
   }
-  const fb=$("bobChooseFlappy"),rb=$("bobChooseRunner"),dsBtn=$("bobChooseNintendoDS");
+  const fb=$("bobChooseFlappy"),rb=$("bobChooseRunner"),dsBtn=$("bobChooseNintendoDS"),gbBtn=$("bobChooseGameBoy");
   if(fb)fb.onclick=e=>{e.preventDefault();e.stopPropagation();openGame(flappy);};
   if(rb)rb.onclick=e=>{e.preventDefault();e.stopPropagation();openGame(runner);};
+  if(gbBtn){gbBtn.style.touchAction="manipulation";gbBtn.addEventListener("touchend",launchGB,{passive:false});gbBtn.addEventListener("pointerup",launchGB,{passive:false});gbBtn.addEventListener("click",launchGB,{passive:false});}
   if(dsBtn){dsBtn.style.touchAction='manipulation';dsBtn.addEventListener('touchend',launchDS,{passive:false});dsBtn.addEventListener('pointerup',launchDS,{passive:false});dsBtn.addEventListener('click',launchDS,{passive:false});}
-  const fback=$("bobFlappyBack"),rback=$("bobRunnerBack"),dsback=$("bobNintendoDSBack");
+  const fback=$("bobFlappyBack"),rback=$("bobRunnerBack"),dsback=$("bobNintendoDSBack"),gbback=$("bobGameBoyBack");
   if(fback)fback.onclick=e=>{e.preventDefault();e.stopPropagation();closeGame();};
   if(rback)rback.onclick=e=>{e.preventDefault();e.stopPropagation();closeGame();};
+  if(gbback){gbback.style.touchAction="manipulation";gbback.addEventListener("touchend",e=>{e.preventDefault();e.stopImmediatePropagation();closeGame();},{passive:false});gbback.addEventListener("click",e=>{e.preventDefault();e.stopImmediatePropagation();closeGame();},{passive:false});}
   if(dsback){dsback.style.touchAction='manipulation';dsback.addEventListener('touchend',e=>{e.preventDefault();e.stopImmediatePropagation();closeGame();},{passive:false});dsback.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();closeGame();},{passive:false});}
   ["bobFlappyStart","bobFlappyMode","bobRunnerStart","bobRunnerMode"].forEach(id=>{const b=$(id);if(b){b.style.pointerEvents='auto';b.style.touchAction='manipulation';}});
   if(ds){['touchstart','touchmove','touchend','touchcancel'].forEach(type=>{ds.addEventListener(type,e=>{e.stopPropagation();if(type==='touchmove')e.preventDefault();},{passive:false});});}
-  [flappy,runner,ds].forEach(el=>{if(!el)return;new MutationObserver(()=>{if(!el.hidden)requestAnimationFrame(()=>window.dispatchEvent(new Event('resize')));}).observe(el,{attributes:true,attributeFilter:['hidden','style']});});
+  [flappy,runner,ds,gb].forEach(el=>{if(!el)return;new MutationObserver(()=>{if(!el.hidden)requestAnimationFrame(()=>window.dispatchEvent(new Event('resize')));}).observe(el,{attributes:true,attributeFilter:['hidden','style']});});
 })();
 </script>
 
